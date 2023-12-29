@@ -1,6 +1,6 @@
 app:
   title: Scaffolded Backstage App
-  baseUrl: http://localhost:3000
+  baseUrl: https://pandurx-backstage.azurewebsites.net
 
 organization:
   name: My Company
