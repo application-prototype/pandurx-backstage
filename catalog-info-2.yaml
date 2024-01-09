@@ -159,7 +159,7 @@ spec:
 
 # API Entity
 # https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-api
-apiVersion: workloadmanagement/v1
+apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: Workload Management Service
@@ -183,7 +183,7 @@ spec:
 
 # API Entity
 # https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-api
-apiVersion: workloadmanagement/v2
+apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: Workload Management Service
@@ -207,7 +207,7 @@ spec:
 
 # API Entity
 # https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-api
-apiVersion: documentservice/documentservice-v1
+apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
   name: Document Management Service
