@@ -261,7 +261,7 @@ kind: User
 # `metadata.name` is required.
 # The name should be the username portion of the user's email address.  E.g. username@tc.gc.ca
 metadata:
-  name: user.name1
+  name: christine.yu
 spec:
   profile:
     displayName: User Name
