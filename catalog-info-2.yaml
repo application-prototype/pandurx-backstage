@@ -261,24 +261,11 @@ kind: User
 # `metadata.name` is required.
 # The name should be the username portion of the user's email address.  E.g. username@tc.gc.ca
 metadata:
-  name: louis-fahrendorff
+  name: user-name
 spec:
   profile:
-    displayName: Louis Fahrendorff
-    email: louis.fahrendorff@tc.gc.ca
+    displayName: User Name
+    email: user.name@email.com
   memberOf: [product-owners]
 
----
 
-# User entity
-apiVersion: backstage.io/v1alpha1
-kind: User
-# `metadata.name` is required.
-# The name should be the username portion of the user's email address.  E.g. username@tc.gc.ca
-metadata:
-  name: michael-barker
-spec:
-  profile:
-    displayName: Michael Barker
-    email: michael.barker@tc.gc.ca
-  memberOf: [product-owners]
