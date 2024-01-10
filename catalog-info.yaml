@@ -20,7 +20,7 @@ metadata:
   tags:
     - cloud
   links:
-    - url: example.com
+    - url: https://google.com
       title: internal application
 spec:
   owner: vikings
