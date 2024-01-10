@@ -55,7 +55,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: Workload Management Service
+  name: workload-management-service-v1
   description: Manages Work Items
 spec:
   type: openapi
@@ -74,7 +74,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: Workload Management Service
+  name: workload-management-service-v2
   description: Manages Work Items
 spec:
   type: openapi
@@ -93,7 +93,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: Document Management Service
+  name: document-management-service
   description: Manages Documents
 spec:
   type: openapi
@@ -112,7 +112,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: API
 metadata:
-  name: List of Values Service
+  name: list-of-values
   description: Manages Work Items
 spec:
   type: openapi
