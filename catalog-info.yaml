@@ -11,7 +11,7 @@ apiVersion: backstage.io/v1alpha1
 kind: System
 metadata:
   # The name of the entity. This name is both meant for human eyes to recognize the entity, and for machines and other components to reference the entity. Must be unique.
-  name: internal application
+  name: internal-application
   title: title internal application
   description: desc internal application
   annotations:
@@ -36,7 +36,7 @@ spec:
 apiVersion: backstage.io/v1alpha1
 kind: Component
 metadata:
-  name: Marine Medical Hub
+  name: marine-medical-hub
   title: Marine Medical External Application
   description: Allows Medical Users (Doctors and Nurses) to upload MME Forms or other Medical files for a given CDN
   tags:
