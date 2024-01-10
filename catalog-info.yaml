@@ -12,8 +12,8 @@ kind: System
 metadata:
   # The name of the entity. This name is both meant for human eyes to recognize the entity, and for machines and other components to reference the entity. Must be unique.
   name: internal application
-  title: title: internal application
-  description: desc: internal application
+  title: title internal application
+  description: desc internal application
   annotations:
     dev.azure.com/project-repo: internal application repository
     backstage.io/source-location: url:https://dev.azure.com/pandurx/repo-location
