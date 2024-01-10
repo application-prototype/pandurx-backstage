@@ -1,1 +1,235 @@
+# Naming conventions
+# -----------
+# 1. Except in the case of titles and descriptions, use alphanumeric lower case characters and separate spaces with hyphens.
+# 2. In the case of titles use title casing with periods.
+# 3. In the case of descriptions be concise with proper capitalization and use of commas and periods.
 
+# Backstage documentation
+# https://backstage.io/docs/features/software-catalog/descriptor-format/#kind-group
+
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  # The name of the entity. This name is both meant for human eyes to recognize the entity, and for machines and other components to reference the entity. Must be unique.
+  name: internal application
+  title: title: internal application
+  description: desc: internal application
+  annotations:
+    dev.azure.com/project-repo: internal application repository
+    backstage.io/source-location: url:https://dev.azure.com/pandurx/repo-location
+  tags:
+    - cloud
+  links:
+    - url: example.com
+      title: internal application
+spec:
+  owner: vikings
+  type: website
+  lifecycle: production
+  domain: certification
+
+---
+######################################
+# Component entity
+######################################
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: Marine Medical Hub
+  title: Marine Medical External Application
+  description: Allows Medical Users (Doctors and Nurses) to upload MME Forms or other Medical files for a given CDN
+  tags:
+    - dotnet
+    - onprem
+spec:
+  owner: ninja-turtles
+  type: website
+  lifecycle: production
+
+---
+######################################
+# API entity
+######################################
+
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: Workload Management Service
+  description: Manages Work Items
+spec:
+  type: openapi
+  lifecycle: production
+  owner: technology-enablement
+  system: my-inspection-app
+  definition: |
+    openapi: "3.0.1"
+    info:
+      version: 2.0.9.4
+      title: DSD MSS Work Management Service API
+    servers:
+      - url: https://api.dev.tc.canada.ca/wms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: Workload Management Service
+  description: Manages Work Items
+spec:
+  type: openapi
+  lifecycle: production
+  owner: technology-enablement
+  system: my-inspection-app
+  definition: |
+    openapi: "3.0.1"
+    info:
+      version: 2.0.9.4
+      title: DSD MSS Work Management Service API
+    servers:
+      - url: https://api.dev.tc.canada.ca/wms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: Document Management Service
+  description: Manages Documents
+spec:
+  type: openapi
+  lifecycle: production
+  owner: technology-enablement
+  system: my-inspection-app
+  definition: |
+    openapi: "3.0.1"
+    info:
+      version: 1.0.1.17
+      title: DocumentService
+    servers:
+      - url: https://api.dev.tc.canada.ca/dms
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: List of Values Service
+  description: Manages Work Items
+spec:
+  type: openapi
+  lifecycle: production
+  owner: technology-enablement
+  system: my-inspection-app
+  definition: |
+    openapi: "3.0.1"
+    info:
+      version: 1.0.0
+      title: List of Values API 1.0
+      license:
+        name: MIT
+    servers:
+      - url: https://api.dev.tc.canada.ca/LOV
+
+---
+######################################
+# User entity
+######################################
+
+## Product Owners
+apiVersion: backstage.io/v1alpha1
+kind: User
+# `metadata.name` is required.
+# The name should be the username portion of the user's email address.  E.g. username@tc.gc.ca
+metadata:
+  name: product.owner01
+spec:
+  profile:
+    displayName: po01
+    email: product.owner01@example.com
+  memberOf: 
+  [
+    product-owners
+  ]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: product.owner02
+spec:
+  profile:
+    displayName: po02
+    email: product.owner02@example.com
+  memberOf: 
+  [
+    product-owners
+  ]
+
+---
+
+## Developers
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: jdoe
+spec:
+  profile:
+    displayName: Jenny Doe
+    email: jenny-doe@example.com
+    picture: https://example.com/staff/jenny-with-party-hat.jpeg
+  memberOf: 
+  [
+    technology-enablement
+  ]
+
+---
+######################################
+# Group entity
+######################################
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: ninja-turtles
+  description: The infra business unit
+spec:
+  type: business-unit
+  profile:
+    displayName: Infrastructure
+    email: infrastructure@example.com
+    picture: https://example.com/groups/bu-infrastructure.jpeg
+  parent: ops
+  children: [backstage, other]
+  members: [jdoe]
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: vikings
+  description: The infra business unit
+spec:
+  type: business-unit
+  profile:
+    displayName: Infrastructure
+    email: infrastructure@example.com
+    picture: https://example.com/groups/bu-infrastructure.jpeg
+  parent: ops
+  children: [backstage, other]
+  members: [jdoe]
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: technology-enablement
+  description: The infra business unit
+spec:
+  type: business-unit
+  profile:
+    displayName: Infrastructure
+    email: infrastructure@example.com
+    picture: https://example.com/groups/bu-infrastructure.jpeg
+  parent: ops
+  children: [backstage, other]
+  members: [jdoe]
