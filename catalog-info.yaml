@@ -198,6 +198,7 @@ spec:
     displayName: Infrastructure
     email: infrastructure@example.com
     picture: https://example.com/groups/bu-infrastructure.jpeg
+  children: [backstage, other]
   members: [po1]
 
 ---
@@ -212,6 +213,7 @@ spec:
     displayName: Infrastructure
     email: infrastructure@example.com
     picture: https://example.com/groups/bu-infrastructure.jpeg
+  children: [backstage, other]
   members: [po2]
 
 ---
@@ -226,4 +228,5 @@ spec:
     displayName: Infrastructure
     email: infrastructure@example.com
     picture: https://example.com/groups/bu-infrastructure.jpeg
+  children: [backstage, other]
   members: [jdoe]
