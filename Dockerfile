@@ -34,6 +34,7 @@ WORKDIR /app
 COPY --from=packages --chown=node:node /app .
 
 RUN --mount=type=cache,target=/home/node/.cache/yarn,sharing=locked,uid=1000,gid=1000 \
+    yarn add --cwd packages/app @backstage/plugin-entity-validation \
     yarn install --frozen-lockfile --network-timeout 600000
 
 COPY --chown=node:node . .
