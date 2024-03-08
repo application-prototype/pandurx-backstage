@@ -6,6 +6,12 @@
  * Happy hacking!
  */
 
+import {
+  WinstonLogger,WinstonLoggerOptions,
+  HostDiscovery
+
+} from '@backstage/backend-app-api';
+import {transports, format} from 'winston';
 import Router from 'express-promise-router';
 import {
   createServiceBuilder,
@@ -15,10 +21,11 @@ import {
   notFoundHandler,
   CacheManager,
   DatabaseManager,
-  HostDiscovery,
+  //HostDiscovery,
   UrlReaders,
   ServerTokenManager,
 } from '@backstage/backend-common';
+
 import { TaskScheduler } from '@backstage/backend-tasks';
 import { Config } from '@backstage/config';
 import app from './plugins/app';
@@ -31,10 +38,13 @@ import search from './plugins/search';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
+import winston from 'winston/lib/winston/config';
 
-function makeCreateEnv(config: Config) {
+function makeCreateEnv(config: Config, logger1: WinstonLogger) {
   const root = getRootLogger();
+  const root1 = logger1;
   const reader = UrlReaders.default({ logger: root, config });
+  console.log("pandurx ===============> " + HostDiscovery);
   const discovery = HostDiscovery.fromConfig(config);
   const cacheManager = CacheManager.fromConfig(config);
   const databaseManager = DatabaseManager.fromConfig(config, { logger: root });
@@ -72,11 +82,28 @@ function makeCreateEnv(config: Config) {
 }
 
 async function main() {
+  const wlo: WinstonLoggerOptions = {
+    meta: {
+      service: 'pandurx-backstage'
+    },
+    format:
+          process.env.NODE_ENV === 'production'
+            ? format.json()
+            : WinstonLogger.colorFormat(),
+    level:  process.env.LOG_LEVEL ?? 'info',
+    transports: [
+      new transports.Console(),
+    ]
+  };
+
+  const logger = WinstonLogger.create(wlo);
+
   const config = await loadBackendConfig({
     argv: process.argv,
-    logger: getRootLogger(),
+    logger
+    //logger: getRootLogger(),
   });
-  const createEnv = makeCreateEnv(config);
+  const createEnv = makeCreateEnv(config, logger);
 
   const catalogEnv = useHotMemoize(module, () => createEnv('catalog'));
   const scaffolderEnv = useHotMemoize(module, () => createEnv('scaffolder'));
