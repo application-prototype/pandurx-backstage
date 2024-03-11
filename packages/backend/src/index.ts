@@ -6,24 +6,27 @@
  * Happy hacking!
  */
 
+// https://github.com/backstage/backstage/issues/22782
+// WinstonLogger.create() will be used instead of createRootLogger()
 import {
   WinstonLogger,WinstonLoggerOptions,
   HostDiscovery
-
 } from '@backstage/backend-app-api';
-import {transports, format} from 'winston';
+
+// import custom plugin
+import helloworld1 from './plugins/helloworld1'; 
+
+import { transports, format } from 'winston';
 import Router from 'express-promise-router';
 import {
   createServiceBuilder,
   loadBackendConfig,
-  getRootLogger,
   useHotMemoize,
   notFoundHandler,
   CacheManager,
   DatabaseManager,
-  //HostDiscovery,
   UrlReaders,
-  ServerTokenManager,
+  ServerTokenManager
 } from '@backstage/backend-common';
 
 import { TaskScheduler } from '@backstage/backend-tasks';
@@ -38,13 +41,13 @@ import search from './plugins/search';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
-import winston from 'winston/lib/winston/config';
 
 function makeCreateEnv(config: Config, logger1: WinstonLogger) {
-  const root = getRootLogger();
-  const root1 = logger1;
+  const root = logger1;
+
+  console.log("pandurx ================> use logger:" + JSON.stringify(root))
+
   const reader = UrlReaders.default({ logger: root, config });
-  console.log("pandurx ===============> " + HostDiscovery);
   const discovery = HostDiscovery.fromConfig(config);
   const cacheManager = CacheManager.fromConfig(config);
   const databaseManager = DatabaseManager.fromConfig(config, { logger: root });
@@ -82,6 +85,27 @@ function makeCreateEnv(config: Config, logger1: WinstonLogger) {
 }
 
 async function main() {
+
+  // transport - to external file
+  // const outputToFile = new transports.File({
+  //   filename: 'test-logging-file.log',
+  //   maxFiles: 14,
+  // });
+
+  // @TODO transport - to azure log analytics
+  // source
+  // | extend TimeGenerated = todatetime(<time-column>)
+  const outputToHttp = new transports.Http({
+    ssl: false,
+    //host: 'https://pbackstagecollendpoint-sq3g.canadacentral-1.ingest.monitor.azure.com',
+    host: 'localhost',
+    port: 7007,
+    // auth?: { username?: string | undefined, password?: string | undefined, bearer?: string | undefined };
+    path: '/api/hello1/test',
+    // agent?: Agent | null;
+  });
+
+  // logger options here
   const wlo: WinstonLoggerOptions = {
     meta: {
       service: 'pandurx-backstage'
@@ -91,19 +115,23 @@ async function main() {
             ? format.json()
             : WinstonLogger.colorFormat(),
     level:  process.env.LOG_LEVEL ?? 'info',
+    //level: 'debug',
     transports: [
-      new transports.Console(),
+      //outputToFile,
+      //transports.Console,
+      outputToHttp
     ]
   };
 
-  const logger = WinstonLogger.create(wlo);
+  const logger1 = WinstonLogger.create(wlo);
+  
+  console.log("pandurx ================> create WinstonLogger")
 
   const config = await loadBackendConfig({
     argv: process.argv,
-    logger
-    //logger: getRootLogger(),
+    logger :  logger1
   });
-  const createEnv = makeCreateEnv(config, logger);
+  const createEnv = makeCreateEnv(config, logger1);
 
   const catalogEnv = useHotMemoize(module, () => createEnv('catalog'));
   const scaffolderEnv = useHotMemoize(module, () => createEnv('scaffolder'));
@@ -113,6 +141,9 @@ async function main() {
   const searchEnv = useHotMemoize(module, () => createEnv('search'));
   const appEnv = useHotMemoize(module, () => createEnv('app'));
 
+  // custom plugin env
+  const hello1Env = useHotMemoize(module, () => createEnv('hello1'));
+
   const apiRouter = Router();
   apiRouter.use('/catalog', await catalog(catalogEnv));
   apiRouter.use('/scaffolder', await scaffolder(scaffolderEnv));
@@ -120,6 +151,9 @@ async function main() {
   apiRouter.use('/techdocs', await techdocs(techdocsEnv));
   apiRouter.use('/proxy', await proxy(proxyEnv));
   apiRouter.use('/search', await search(searchEnv));
+
+  // custom plugin
+  apiRouter.use('/hello1', await helloworld1(hello1Env));
 
   // Add backends ABOVE this line; this 404 handler is the catch-all fallback
   apiRouter.use(notFoundHandler());

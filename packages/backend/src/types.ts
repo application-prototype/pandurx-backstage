@@ -1,4 +1,4 @@
-import { Logger } from 'winston';
+import {LoggerService} from '@backstage/backend-plugin-api';
 import { Config } from '@backstage/config';
 import {
   PluginCacheManager,
@@ -12,7 +12,7 @@ import { PermissionEvaluator } from '@backstage/plugin-permission-common';
 import { IdentityApi } from '@backstage/plugin-auth-node';
 
 export type PluginEnvironment = {
-  logger: Logger;
+  logger: LoggerService;
   database: PluginDatabaseManager;
   cache: PluginCacheManager;
   config: Config;
