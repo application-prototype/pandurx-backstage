@@ -1,8 +1,10 @@
 import { errorHandler } from '@backstage/backend-common';
 import express from 'express';
 import Router from 'express-promise-router';
-import {LoggerService} from '@backstage/backend-plugin-api';
+import { LoggerService } from '@backstage/backend-plugin-api';
 
+//import { ProfileInfo } from "@backstage/plugin-auth-backend"; // apparently deprecated and should use plugin-auth-node
+import { DefaultIdentityClient, ProfileInfo } from "@backstage/plugin-auth-node";
 import { DefaultAzureCredential } from "@azure/identity";
 import { LogsIngestionClient } from "@azure/monitor-ingestion";
 import * as dotenv from "dotenv";
@@ -10,12 +12,14 @@ import { DateTime } from 'luxon';
 
 export interface RouterOptions {
   logger: LoggerService;
+  //identity: DefaultIdentityClient;
 }
 
 export async function createRouter(
   options: RouterOptions,
 ): Promise<express.Router> {
-  
+
+
   const { logger } = options;
 
   const router = Router();
@@ -24,15 +28,50 @@ export async function createRouter(
   router.get('/health', (_, response) => {
     logger.info('HELLO WORLD!!');
     logger.info('PONG!');
+    logger.info("user =====> ");
     response.json({ status: 'ok' });
   });
 
 
   // testing logging to azure
 
-  router.post('/test', (req, res) => {
-    console.log("pandurx post ====> " + JSON.stringify(req.params));
+  router.post('/test', async (req, res) => {
+    console.log("pandurx post ====> " + JSON.stringify(req.body));
+
+    // get user identity???
+    console.log("user ??? ======> " )
+
+    // testing ingestion...
+    const { LogsIngestionClient } = require("@azure/monitor-ingestion");
+
+    require("dotenv").config();
+
+    const logsIngestionEndpoint = "https://pbackstagecollendpoint-sq3g.canadacentral-1.ingest.monitor.azure.com" || "logs_ingestion_endpoint";
+    //const ruleId = "/subscriptions/30462eb8-8ad3-474b-964c-af41124f9ad0/resourceGroups/PANDURX-RG/providers/Microsoft.Insights/dataCollectionRules/pbackstagecollrule" || "data_collection_rule_id";
+    const ruleId = "dcr-db44129dc8d64f9d8400a279fffa2e3e" || "data_collection_rule_id";
+    const streamName = "Custom-pbackstagelog_CL" || "data_stream_name";
+
+    const credential = new DefaultAzureCredential();
+    const client = new LogsIngestionClient(logsIngestionEndpoint, credential);
+    var log = JSON.parse("[" + JSON.stringify(req.body) + "]");
+    try{
+      var result = await client.upload(ruleId, streamName, log);
+      console.log("pandurx =====> sending..." + result);   
+    }
+    catch(e){
+      console.log("pandurx =====> error!" + e);   
+    }
+    finally {
+      console.log("pandurx =====> success!!");   
+    }
+
+    res.json({resp: 'captured'});
+
   });
+
+
+
+
   router.get('/test', async (_, response) => {
 
     // testing ingestion...

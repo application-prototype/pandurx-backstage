@@ -2,6 +2,7 @@ import { createRouter } from '@internal/plugin-helloworld1-backend';
 import { Router } from 'express';
 import { PluginEnvironment } from '../types';
 
+import { DefaultIdentityClient, ProfileInfo } from "@backstage/plugin-auth-node";
 import { DefaultAzureCredential } from "@azure/identity";
 import { LogsIngestionClient } from "@azure/monitor-ingestion";
 import * as dotenv from "dotenv";
@@ -9,6 +10,8 @@ import { DateTime } from 'luxon';
 
 export default async function createPlugin(
   env: PluginEnvironment,
+  //identity: DefaultIdentityClient
+  //profile: ProfileInfo
 ): Promise<Router> {
   // Here is where you will add all of the required initialization code that
   // your backend plugin needs to be able to start!
@@ -29,22 +32,22 @@ export default async function createPlugin(
 
   const credential = new DefaultAzureCredential();
 
-  console.log(credential);
+  // console.log(credential);
 
-  const client = new LogsIngestionClient(logsIngestionEndpoint, credential);
-  const logs = [
-    {
-      author: "pandurx-startup",
-      log_app: "pbackstage",
-      log_timestamp: "2021-12-08T23:51:14.1104269Z",
-    }
-  ];
-  try{
-    await client.upload(ruleId, streamName, logs);
-  }
-  catch(e){
-    console.log(e);
-  }
+  // const client = new LogsIngestionClient(logsIngestionEndpoint, credential);
+  // const logs = [
+  //   {
+  //     author: "pandurx-startup",
+  //     log_app: "pbackstage",
+  //     log_timestamp: "2021-12-08T23:51:14.1104269Z",
+  //   }
+  // ];
+  // try{
+  //   await client.upload(ruleId, streamName, logs);
+  // }
+  // catch(e){
+  //   console.log(e);
+  // }
 
 
   return await createRouter({
@@ -52,3 +55,5 @@ export default async function createPlugin(
   });
 }
 
+
+//{"level":"\u001b[90mdebug\u001b[39m","message":"Processing template:default/example-nodejs-template","plugin":"catalog","service":"pandurx-backstage","timestamp":"2024-03-16T02:19:58.172Z","type":"plugin"}

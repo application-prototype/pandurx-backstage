@@ -40,7 +40,7 @@ import techdocs from './plugins/techdocs';
 import search from './plugins/search';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
-import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
+import { DefaultIdentityClient, ProfileInfo } from '@backstage/plugin-auth-node';
 
 function makeCreateEnv(config: Config, logger1: WinstonLogger) {
   const root = logger1;
@@ -69,6 +69,7 @@ function makeCreateEnv(config: Config, logger1: WinstonLogger) {
     const database = databaseManager.forPlugin(plugin);
     const cache = cacheManager.forPlugin(plugin);
     const scheduler = taskScheduler.forPlugin(plugin);
+
     return {
       logger,
       database,
@@ -79,7 +80,8 @@ function makeCreateEnv(config: Config, logger1: WinstonLogger) {
       tokenManager,
       scheduler,
       permissions,
-      identity,
+      //identity
+      //profile
     };
   };
 }
@@ -110,11 +112,8 @@ async function main() {
     meta: {
       service: 'pandurx-backstage'
     },
-    format:
-          process.env.NODE_ENV === 'production'
-            ? format.json()
-            : WinstonLogger.colorFormat(),
-    level:  process.env.LOG_LEVEL ?? 'info',
+    format: format.json(),
+    level:  'debug',
     //level: 'debug',
     transports: [
       //outputToFile,
