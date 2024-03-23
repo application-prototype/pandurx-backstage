@@ -1,6 +1,5 @@
 import { LoggerService } from '@backstage/backend-plugin-api';
 import { Config } from '@backstage/config';
-import { ProfileInfo } from "@backstage/plugin-auth-node";
 import 
 {
   PluginCacheManager,
@@ -23,4 +22,5 @@ export type PluginEnvironment = {
   tokenManager: TokenManager;
   scheduler: PluginTaskScheduler;
   permissions: PermissionEvaluator;
+  identity: IdentityApi;
 };

@@ -6,11 +6,12 @@
  * Happy hacking!
  */
 
+import { AzureTransport } from "./azure-transport.ts"
+
 // https://github.com/backstage/backstage/issues/22782
 // WinstonLogger.create() will be used instead of createRootLogger()
 import {
-  WinstonLogger,WinstonLoggerOptions,
-  HostDiscovery
+  WinstonLogger, WinstonLoggerOptions, HostDiscovery
 } from '@backstage/backend-app-api';
 
 // import custom plugin
@@ -26,7 +27,8 @@ import {
   CacheManager,
   DatabaseManager,
   UrlReaders,
-  ServerTokenManager
+  ServerTokenManager,
+  //HostDiscovery,
 } from '@backstage/backend-common';
 
 import { TaskScheduler } from '@backstage/backend-tasks';
@@ -40,13 +42,10 @@ import techdocs from './plugins/techdocs';
 import search from './plugins/search';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
-import { DefaultIdentityClient, ProfileInfo } from '@backstage/plugin-auth-node';
+import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
 
 function makeCreateEnv(config: Config, logger1: WinstonLogger) {
   const root = logger1;
-
-  console.log("pandurx ================> use logger:" + JSON.stringify(root))
-
   const reader = UrlReaders.default({ logger: root, config });
   const discovery = HostDiscovery.fromConfig(config);
   const cacheManager = CacheManager.fromConfig(config);
@@ -80,8 +79,7 @@ function makeCreateEnv(config: Config, logger1: WinstonLogger) {
       tokenManager,
       scheduler,
       permissions,
-      //identity
-      //profile
+      identity
     };
   };
 }
@@ -94,38 +92,35 @@ async function main() {
   //   maxFiles: 14,
   // });
 
-  // @TODO transport - to azure log analytics
-  // source
-  // | extend TimeGenerated = todatetime(<time-column>)
   const outputToHttp = new transports.Http({
     ssl: false,
-    //host: 'https://pbackstagecollendpoint-sq3g.canadacentral-1.ingest.monitor.azure.com',
     host: 'localhost',
     port: 7007,
-    // auth?: { username?: string | undefined, password?: string | undefined, bearer?: string | undefined };
     path: '/api/hello1/test',
-    // agent?: Agent | null;
+  });
+
+  //https://github.com/winstonjs/winston-transport#readme
+  const azureTransport = new AzureTransport({
+    // custom transport options
+    level: 'info',
   });
 
   // logger options here
   const wlo: WinstonLoggerOptions = {
     meta: {
-      service: 'pandurx-backstage'
+      service: 'p-backstage'
     },
     format: format.json(),
-    level:  'debug',
-    //level: 'debug',
+    level: 'info',
     transports: [
       //outputToFile,
       //transports.Console,
-      outputToHttp
+      //outputToHttp,
+      azureTransport
     ]
   };
 
   const logger1 = WinstonLogger.create(wlo);
-  
-  console.log("pandurx ================> create WinstonLogger")
-
   const config = await loadBackendConfig({
     argv: process.argv,
     logger :  logger1
