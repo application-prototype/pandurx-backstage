@@ -18,6 +18,9 @@ import {
   HostDiscovery,
   UrlReaders,
   ServerTokenManager,
+  createRootLogger,
+  setRootLogger,
+  requestLoggingHandler,
 } from '@backstage/backend-common';
 import { TaskScheduler } from '@backstage/backend-tasks';
 import { Config } from '@backstage/config';
@@ -31,6 +34,8 @@ import search from './plugins/search';
 import { PluginEnvironment } from './types';
 import { ServerPermissionClient } from '@backstage/plugin-permission-node';
 import { DefaultIdentityClient } from '@backstage/plugin-auth-node';
+import { AzureTransport } from './azure-transport';
+import { format } from 'winston';
 
 function makeCreateEnv(config: Config) {
   const root = getRootLogger();
@@ -72,6 +77,22 @@ function makeCreateEnv(config: Config) {
 }
 
 async function main() {
+
+  console.log("main... " + DefaultIdentityClient.name)
+  // creating and setting root logger
+  var custom = createRootLogger({
+    format: format.json(),
+    defaultMeta: {
+      testing: 'test'
+    },
+    transports: [
+      new AzureTransport('ipsum', {
+        level: 'silly',
+      })
+    ]
+  });
+  setRootLogger(custom);
+
   const config = await loadBackendConfig({
     argv: process.argv,
     logger: getRootLogger(),
