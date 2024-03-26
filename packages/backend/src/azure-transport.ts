@@ -3,9 +3,19 @@ import Transport, { TransportStreamOptions } from 'winston-transport';
 import type { LogEntry } from "winston";
 import { LogsIngestionClient } from "@azure/monitor-ingestion";
 import { DefaultAzureCredential } from "@azure/identity";
+import { Config } from '@backstage/config';
 
+let _config: Config;
+let  _client: LogsIngestionClient;
+let  _ruleId: string;
+let  _stream: string;
+let  _logsIngestionEndpoint: string;
 export class AzureTransport extends Transport {
-  constructor(private _lorem: string, opts: TransportStreamOptions) 
+  
+  private _credential: DefaultAzureCredential;
+
+
+  constructor(opts: TransportStreamOptions) 
   {
     super(opts);
 
@@ -14,9 +24,9 @@ export class AzureTransport extends Transport {
      * Connection information for databases
      * Authentication information for APIs
      */
-    
-    console.log("pandurx ======> constructor " + this._lorem)
 
+    this._credential = new DefaultAzureCredential();
+    
     /* 
      * notes
      * yarn add winston-transport --ignore-workspace-root-check
@@ -25,9 +35,24 @@ export class AzureTransport extends Transport {
      * 
      */
 
+    // initialize the variables
+    // this._logsIngestionEndpoint = 'logsIngestionEndpoint'
+    // this._ruleId = 'ruleId'
+    // this._stream = 'stream'
+    // this._client = new LogsIngestionClient(this._logsIngestionEndpoint, this._credential);
   }
 
-    // this functions run when something is logged so here's where you can add you custom logic to do stuff when something is logged.
+  setConfig(config: Config) {
+    _config = config;
+    const azureLoggingConfig = _config.getConfig('azure-logging');
+    _logsIngestionEndpoint = azureLoggingConfig.getString('logsIngestionEndpoint');
+    _ruleId = azureLoggingConfig.getString('ruleId');
+    _stream = azureLoggingConfig.getString('stream');
+    _client = new LogsIngestionClient(_logsIngestionEndpoint, this._credential);
+  }
+
+
+  // this functions run when something is logged so here's where you can add you custom logic to do stuff when something is logged.
   async log(info: LogEntry, callback: any) {
     // make sure you installed `@types/node` or this will give a typerror
     // this is the basic default behavior don't forget to add this.
@@ -36,13 +61,6 @@ export class AzureTransport extends Transport {
     });
 
     const { level, message, ...meta } = info;
-
-    const logsIngestionEndpoint = "https://pbackstagecollendpoint-sq3g.canadacentral-1.ingest.monitor.azure.com" || "logs_ingestion_endpoint";
-    const ruleId = "dcr-cf0afeda30224cc7992258e17b671bb4" || "data_collection_rule_id";
-    const streamName = "Custom-backstage_CL" || "data_stream_name";
-
-    const credential = new DefaultAzureCredential();
-    const client = new LogsIngestionClient(logsIngestionEndpoint, credential);
 
     const logs = [
       {
@@ -59,7 +77,7 @@ export class AzureTransport extends Transport {
     console.log("pandurx ======> log info " + JSON.stringify(info))
 
     try {
-      await client.upload(ruleId, streamName, logs);
+      await _client.upload(_ruleId, _stream, logs);
     }
     catch(e) {
       console.log("caught exception while uploading to azure " + e);   

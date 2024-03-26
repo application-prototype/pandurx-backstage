@@ -77,26 +77,27 @@ function makeCreateEnv(config: Config) {
 }
 
 async function main() {
-
-  console.log("main... " + DefaultIdentityClient.name)
+  
   // creating and setting root logger
+  var transport = new AzureTransport({level: 'silly'})
   var custom = createRootLogger({
     format: format.json(),
     defaultMeta: {
       testing: 'test'
     },
     transports: [
-      new AzureTransport('ipsum', {
-        level: 'silly',
-      })
+      transport
     ]
   });
+
   setRootLogger(custom);
 
   const config = await loadBackendConfig({
     argv: process.argv,
     logger: getRootLogger(),
   });
+
+  transport.setConfig(config);
   const createEnv = makeCreateEnv(config);
 
   const catalogEnv = useHotMemoize(module, () => createEnv('catalog'));
