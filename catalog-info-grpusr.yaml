@@ -1,0 +1,65 @@
+######################################
+# User entity
+######################################
+
+## Product Owners
+apiVersion: backstage.io/v1alpha1
+kind: User
+# `metadata.name` is required.
+# The name should be the username portion of the user's email address.  E.g. username@tc.gc.ca
+metadata:
+  name: user.dev01
+spec:
+  profile:
+    displayName: user dev01
+    email: user.dev01@example.com
+  memberOf: 
+  [
+    developer
+  ]
+
+---
+
+######################################
+# Group entity
+######################################
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: developer
+  description: the developer
+spec:
+  type: technical-unit
+  profile:
+    displayName: Developer
+    email: infrastructure@example.com
+  children: []
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: marine
+  description: subgroup01
+spec:
+  type: business-unit
+  profile:
+    displayName: Marine
+    email: infrastructure@example.com
+  children: [developer]
+
+---
+
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: safety.solutions
+  description: safety solutions
+spec:
+  type: business-unit
+  profile:
+    displayName: Safety Solutions
+    email: infrastructure@example.com
+  children: [marine]
