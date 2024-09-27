@@ -72,6 +72,11 @@ auth:
 scaffolder:
   # see https://backstage.io/docs/features/software-templates/configuration for software template options
 
+azure-logging:
+  logsIngestionEndpoint: 'https://pbackstagecollendpoint-sq3g.canadacentral-1.ingest.monitor.azure.com'
+  ruleId: 'dcr-cf0afeda30224cc7992258e17b671bb4'
+  stream: 'Custom-backstage_CL'
+
 catalog:
   import:
     entityFilename: catalog-info.yaml
